@@ -1,0 +1,2848 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIwOTA4Njg5MzAzOTA0NTE0MzYzNyIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzZiZWEwOTQzZTdlMDNlOTFfbGFxdGEtbWFya2V0cGxhY2UuaHRtbC03NzYifSwiZXhwIjoxNzk1NTc5MjA5LCJpYXQiOjE3OTU1NzU2MDksImFsZyI6IlJTMjU2In0.hGdlTCceAwqyZUuy3v5bxBVxhOd_3fLFEJSVwTD5NAZht4Wgla24KtXHSGRucK6GQnSR5jm3NDoa6_ipDFuoUeB-JYU_9FI85Zfj0qchm7ROfVwB_9sY7-CGKYNHJLjif3rO3STdb7ecWZlCZFKSxPcvinTX-YBfW1nQaBEwYdz40OUXvVc0CtwceodL0No6EW7eTLphBnsYxFKw2ViVGfG0TU39wQCz8f3A_8zI-JYWNqH3TceuWWicgA7Gcto33Tqect2hqh4KhbOy3eAP7tUYd3uu_rmigXIgmdojEy3oo77YUPWb59re7dfnv-q37Rch-MwfCjikhM9Smse-5g","c_6bea0943e7e03e91_laqta-marketplace.html-776")</script><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
+  ]);
+  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+
+  function isTextEntryTarget(target) {
+    if (!target) return false;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' || target.isContentEditable === true;
+  }
+
+  // An element absorbs the key only if it both overflows on the axis being
+  // scrolled and is configured to scroll on that axis. The cheap dimension
+  // test runs first because getComputedStyle forces a style recalc, and this
+  // runs on every keypress. Each axis is read from its own longhand: the
+  // 'overflow' shorthand serializes as two values when the axes differ, which
+  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
+  function canScroll(node, horizontal) {
+    const overflows = horizontal ? node.scrollWidth > node.clientWidth
+                                 : node.scrollHeight > node.clientHeight;
+    if (!overflows) return false;
+    const style = window.getComputedStyle(node);
+    const overflow = horizontal ? style.overflowX : style.overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  }
+
+  // Walks up from the event target so nested scrollers keep their behavior.
+  // <body> is included because pages that pin the root height make it the
+  // scroll container.
+  function hasScrollableAncestor(target, horizontal) {
+    let node = target;
+    while (node && node !== document.documentElement) {
+      if (canScroll(node, horizontal)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function rootCanScroll(horizontal) {
+    const scroller = document.scrollingElement || document.documentElement;
+    if (!scroller) return false;
+    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
+    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
+                      : scroller.scrollHeight > window.innerHeight + 1;
+  }
+
+  window.addEventListener('keydown', function(event) {
+    if (!SCROLL_KEYS.has(event.key)) return;
+    if (event.defaultPrevented) return;
+    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
+    // reserved for shortcuts, so none of them are scroll intent.
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+
+    const target = event.target;
+    if (isTextEntryTarget(target)) return;
+
+    // Anything that can still absorb the scroll gets to keep it.
+    const horizontal = HORIZONTAL_KEYS.has(event.key);
+    if (rootCanScroll(horizontal)) return;
+    if (hasScrollableAncestor(target, horizontal)) return;
+
+    event.preventDefault();
+  }, {capture: true, passive: false});
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.i=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.extensions="";var l=0,t=null,r=null,q=[],F=new TextEncoder,
+G=new TextDecoder;c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*
+16|0;return(f==="x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;
+(g=t)==null||g.postMessage(a)}};Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
+  const OVERLAY_SELECTOR =
+    'dialog[open], [role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"], [role="combobox"]';
+
+  function isVisibleOverlay(element) {
+    if (element.closest('[hidden], [aria-hidden="true"], [inert]')) {
+      return false;
+    }
+    if (window.getComputedStyle(element).visibility === 'hidden') {
+      return false;
+    }
+    for (let cur = element; cur; cur = cur.parentElement) {
+      if (window.getComputedStyle(cur).display === 'none') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function hasOpenOverlay() {
+    const candidates = document.querySelectorAll(OVERLAY_SELECTOR);
+    for (let i = 0; i < candidates.length; i++) {
+      if (isVisibleOverlay(candidates[i])) {
+        return true;
+      }
+    }
+    try {
+      if (document.querySelector('[popover]:popover-open')) {
+        return true;
+      }
+    } catch (e) {
+      // Ignore engines that do not support :popover-open.
+    }
+    return false;
+  }
+
+  function isNonEmptySearchInput(target) {
+    return (
+      Boolean(target) &&
+      target.tagName === 'INPUT' &&
+      typeof target.type === 'string' &&
+      target.type.toLowerCase() === 'search' &&
+      typeof target.value === 'string' &&
+      target.value.length > 0
+    );
+  }
+
+  function shouldIgnoreEscape(event) {
+    return (
+      event.key !== 'Escape' ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.isComposing ||
+      event.repeat ||
+      event.keyCode === 229 ||
+      isNonEmptySearchInput(event.target)
+    );
+  }
+
+  let shouldIgnoreCaptureState = false;
+
+  window.addEventListener(
+    'keydown',
+    function(event) {
+      if (event.key === 'Escape') {
+        shouldIgnoreCaptureState =
+          hasOpenOverlay() || isNonEmptySearchInput(event.target);
+      }
+    },
+    {capture: true},
+  );
+
+  window.addEventListener('keydown', function(event) {
+    if (
+      shouldIgnoreEscape(event) ||
+      event.defaultPrevented ||
+      shouldIgnoreCaptureState
+    ) {
+      return;
+    }
+    const wasBlockedOnCapture = shouldIgnoreCaptureState;
+    queueMicrotask(function() {
+      if (event.defaultPrevented || wasBlockedOnCapture) {
+        return;
+      }
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({'type': 'escapeKey'}, '*');
+      }
+    });
+  });
+})();</script><script data-bard-client-injected="true">(function() {
+  function normalizeSlug(str) {
+    try {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^p{L}p{N}s_-]/gu, '')
+        .replace(/s+/g, '-');
+    } catch (e) {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9s_-]/g, '')
+        .replace(/s+/g, '-');
+    }
+  }
+
+  function findTargetElement(hash) {
+    if (!hash || hash === '#') {
+      return null;
+    }
+    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {
+      // Ignore URI malformed errors.
+    }
+
+    // 1. Direct ID match (raw and decoded).
+    let target = document.getElementById(rawId) || document.getElementById(decodedId);
+    if (target) {
+      return target;
+    }
+
+    // 2. Name attribute match (<a name="...">).
+    try {
+      if (typeof CSS !== 'undefined' && CSS.escape) {
+        target =
+          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
+          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
+      } else {
+        const namedElements = document.getElementsByName(rawId);
+        if (namedElements && namedElements.length > 0) {
+          return namedElements[0];
+        }
+      }
+    } catch (e) {
+      // Ignore querySelector syntax errors.
+    }
+    if (target) {
+      return target;
+    }
+
+    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
+    const targetSlug = normalizeSlug(decodedId);
+    if (targetSlug) {
+      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+        if (normalizeSlug(heading.textContent || '') === targetSlug) {
+          return heading;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
+    if (!anchor) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+    if (
+      !href ||
+      href.trim().toLowerCase().startsWith('javascript:') ||
+      anchor.hasAttribute('download')
+    ) {
+      return;
+    }
+
+    // Check if the link is an in-page hash / anchor link.
+    if (href.startsWith('#')) {
+      event.preventDefault();
+      const targetElement = findTargetElement(href);
+      if (targetElement) {
+        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+      return;
+    }
+
+    // Check if the URL has the same origin/pathname but with a hash.
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (
+        url.hash &&
+        url.origin === window.location.origin &&
+        url.pathname === window.location.pathname
+      ) {
+        event.preventDefault();
+        const targetElement = findTargetElement(url.hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+        return;
+      }
+    } catch (e) {
+      // Fall through if URL parsing fails.
+    }
+
+    // For all external or full navigation links, prevent iframe-level navigation
+    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
+    // safely in a new tab/window.
+    if (anchor.target !== '_blank') {
+      event.preventDefault();
+      window.open(anchor.href, '_blank', 'noopener,noreferrer');
+    }
+  }, {capture: true});
+})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لقطة | Laqta — سوق مصر للإعلانات الفردية ومتاجر وشركات</title>
+  <style>
+    /* =========================================================================
+     * 1. DESIGN TOKENS & RESET (ROYAL NAVY, ROYAL BLUE & WARM AMBER/GOLD)
+     * ========================================================================= */
+    :root {
+      --bg-page: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F1F5F9;
+      --navy: #0F172A;
+      --navy-mid: #1E293B;
+      --primary: #2563EB;
+      --primary-dark: #1D4ED8;
+      --primary-soft: #EFF6FF;
+      --accent: #F59E0B;
+      --accent-dark: #D97706;
+      --accent-soft: #FFFBEB;
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --border: #E2E8F0;
+      --whatsapp: #16A34A;
+      --danger: #DC2626;
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 10px 25px rgba(15, 23, 42, 0.10);
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-pill: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, Arial, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* =========================================================================
+     * 2. STICKY HEADER
+     * ========================================================================= */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: start;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      font-weight: 800;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 800;
+      line-height: 1.1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--navy);
+    }
+
+    .brand-accent {
+      color: var(--accent-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 800;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-subtle);
+    }
+
+    .btn-whatsapp {
+      background: var(--whatsapp);
+      color: #ffffff;
+    }
+
+    .btn-whatsapp:hover {
+      background: #15803d;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .section-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .stores-panel {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+      gap: 12px;
+    }
+
+    .store-card {
+      text-align: start;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg-page);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .store-card:hover,
+    .store-card.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .store-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      border: 2px solid var(--accent);
+      color: #FDE68A;
+      font-weight: 800;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .store-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .store-meta {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* =========================================================================
+     * 3. HERO & 3-WAY HYBRID SWITCHER
+     * ========================================================================= */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1E3A8A 100%);
+      color: #ffffff;
+      padding: 28px 0 32px;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(245, 158, 11, 0.16);
+      border: 1px solid rgba(245, 158, 11, 0.42);
+      color: #FDE68A;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 10px;
+    }
+
+    .hero-title {
+      font-size: clamp(21px, 3.2vw, 31px);
+      font-weight: 800;
+      line-height: 1.25;
+      max-width: 780px;
+      margin-bottom: 8px;
+    }
+
+    .hero-sub {
+      font-size: 13.5px;
+      color: #CBD5E1;
+      max-width: 720px;
+      margin-bottom: 18px;
+    }
+
+    .search-box {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      padding: 8px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      box-shadow: var(--shadow-md);
+    }
+
+    @media (min-width: 768px) {
+      .search-box {
+        grid-template-columns: 1fr 240px auto;
+      }
+    }
+
+    .field-control {
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-page);
+      color: var(--text-main);
+      font-size: 13.5px;
+      font-weight: 600;
+      outline: none;
+    }
+
+    .field-control:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    .mode-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 15px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      transition: all 0.15s ease;
+    }
+
+    .mode-pill.active {
+      background: #ffffff;
+      color: var(--primary);
+      border-color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mode-count {
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      background: rgba(15, 23, 42, 0.35);
+    }
+
+    .mode-pill.active .mode-count {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    /* =========================================================================
+     * 4. CATEGORIES BAR
+     * ========================================================================= */
+    .cat-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+    }
+
+    .cat-scroll {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .cat-chip {
+      white-space: nowrap;
+      padding: 8px 13px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-page);
+      font-size: 12.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .cat-chip:hover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .cat-chip.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .cat-count {
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 23, 42, 0.07);
+    }
+
+    .cat-chip.active .cat-count {
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+    }
+
+    /* =========================================================================
+     * 5. MAIN FEED & LISTING CARDS
+     * ========================================================================= */
+    .main-area {
+      padding: 22px 0 40px;
+      flex: 1;
+    }
+
+    .feed-toolbar {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .listings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+      gap: 16px;
+    }
+
+    .ad-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .ad-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .ad-banner {
+      height: 132px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .ad-banner.personal {
+      background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+      color: var(--navy);
+    }
+
+    .ad-banner.business {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      color: #ffffff;
+    }
+
+    .banner-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+    }
+
+    .badge-personal {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .badge-business {
+      background: var(--accent);
+      color: var(--navy);
+    }
+
+    .fav-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .banner-bottom {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .banner-icon {
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .banner-cat {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--text-main);
+    }
+
+    .ad-banner.business .banner-cat {
+      background: rgba(0, 0, 0, 0.28);
+      color: #ffffff;
+    }
+
+    .ad-body {
+      padding: 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .ad-price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ad-price {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .ad-cond {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+    }
+
+    .ad-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 6px;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+
+    .ad-title:hover {
+      color: var(--primary);
+    }
+
+    .ad-meta {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ad-seller-link {
+      font-weight: 800;
+      color: var(--accent-dark);
+      text-align: end;
+    }
+
+    .ad-seller-link:hover {
+      text-decoration: underline;
+    }
+
+    .ad-actions {
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+    }
+
+    .ad-actions .btn {
+      padding: 8px 6px;
+      font-size: 12px;
+    }
+
+    /* =========================================================================
+     * 6. MODALS, EMPTY STATE, TOAST & FOOTER
+     * ========================================================================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(15, 25, 22, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 560px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      margin: auto;
+    }
+
+    .modal-head {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-page);
+    }
+
+    .modal-head.business {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      color: #ffffff;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .modal-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 520px) {
+      .type-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .type-card {
+      text-align: start;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border);
+      background: var(--bg-page);
+    }
+
+    .type-card.selected-personal {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .type-card.selected-business {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 520px) {
+      .form-grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .textarea-control {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-page);
+      font-size: 13.5px;
+      resize: vertical;
+      outline: none;
+    }
+
+    .error-box {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: var(--danger);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .empty-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 42px 20px;
+      text-align: center;
+    }
+
+    .footer {
+      background: var(--navy);
+      color: #CBD5E1;
+      padding: 24px 0;
+      margin-top: auto;
+      border-top: 1px solid var(--navy-mid);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 80;
+      background: var(--navy);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 11px 18px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: var(--shadow-md);
+    }
+  </style>
+</head>
+<body>
+  <div id="app"><header class="header"><div class="container header-inner"><button type="button" class="brand" data-act="home"><div class="brand-logo">ل</div><div><div class="brand-title"><span>لقطة</span><span class="brand-accent">Laqta</span></div><div class="brand-sub">سوق الأفراد ومتاجر وشركات مصر</div></div></button><div class="header-actions"><button type="button" class="btn btn-outline" data-act="mode-saved">❤️ المفضلة (2)</button><button type="button" class="btn btn-outline" data-act="toggle-lang">🌐 English</button><button type="button" class="btn btn-primary" data-act="open-post">+ أضف إعلانك</button></div></div></header><section class="hero"><div class="container"><div class="hero-tag">🇪🇬 تغطية شاملة لـ 27 محافظة والمدن الجديدة</div><h1 class="hero-title">بيع واشتري مباشرة من الأفراد أو من متاجر وشركات موثقة في مصر</h1><p class="hero-sub">منصة مصرية متوازنة تجمع إعلانات الأفراد المباشرة مع كتالوجات متاجر وشركات معتمدة في جميع المحافظات.</p><div class="search-box"><input id="q-input" class="field-control" type="text" value="" placeholder="ابحث عن سيارة، عقار، موبايل، أثاث، وظيفة، أو اسم متجر وشركة..."><select id="gov-select" class="field-control"><option value="all">كل المحافظات (27)</option><option value="cairo">القاهرة</option><option value="new-capital">العاصمة الإدارية الجديدة</option><option value="giza">الجيزة</option><option value="alexandria">الإسكندرية</option><option value="faiyum">الفيوم</option><option value="matrouh">مطروح والعلمين الجديدة</option><option value="luxor">الأقصر</option><option value="aswan">أسوان</option><option value="red-sea">البحر الأحمر</option><option value="south-sinai">جنوب سيناء</option><option value="north-sinai">شمال سيناء</option><option value="dakahlia">الدقهلية</option><option value="sharqia">الشرقية</option><option value="gharbia">الغربية</option><option value="menoufia">المنوفية</option><option value="beheira">البحيرة</option><option value="kafr-el-sheikh">كفر الشيخ</option><option value="damietta">دمياط</option><option value="port-said">بورسعيد</option><option value="ismailia">الإسماعيلية</option><option value="suez">السويس والعين السخنة</option><option value="qalyubia">القليوبية</option><option value="beni-suef">بني سويف</option><option value="minya">المنيا</option><option value="assiut">أسيوط</option><option value="sohag">سوهاج</option><option value="qena">قنا</option><option value="new-valley">الوادي الجديد</option></select><button type="button" class="btn btn-primary" style="height:44px;padding:0 22px;" data-act="search">🔍 بحث</button></div><div class="mode-bar"><button type="button" class="mode-pill active" data-act="set-mode" data-val="all"><span>⚖️</span><span>الكل (أفراد + متاجر)</span><span class="mode-count">10</span></button><button type="button" class="mode-pill" data-act="set-mode" data-val="personal"><span>👤</span><span>إعلانات الأفراد</span><span class="mode-count">5</span></button><button type="button" class="mode-pill" data-act="set-mode" data-val="business"><span>🏢</span><span>متاجر وشركات</span><span class="mode-count">5</span></button></div></div></section><section class="cat-bar"><div class="container"><div class="cat-scroll"><button type="button" class="cat-chip active" data-act="set-cat" data-val="all"><span>كل الأقسام (10)</span><span class="cat-count">10</span></button><button type="button" class="cat-chip" data-act="set-cat" data-val="vehicles"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"></path><circle cx="7" cy="17" r="2"></circle><circle cx="17" cy="17" r="2"></circle></svg><span>سيارات ومركبات</span><span class="cat-count">2</span></button><button type="button" class="cat-chip" data-act="set-cat" data-val="real-estate"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-4"></path></svg><span>عقارات</span><span class="cat-count">2</span></button><button type="button" class="cat-chip" data-act="set-cat" data-val="mobiles-tablets"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg><span>موبايلات وتابلت</span><span class="cat-count">1</span></button><button type="button" class="cat-chip" data-act="set-cat" data-val="electronics-appliances"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg><span>إلكترونيات وأجهزة منزلية</span><span class="cat-count">1</span></button><button type="button" class="cat-chip" data-act="set-cat" data-val="home-office"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"></path><path d="M2 11v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H6v-2a2 2 0 0 0-4 0Z"></path></svg><span>أثاث وديكور المنزل</span><span class="cat-count">1</span></button><button type="button" class="cat-chip" data-act="set-cat" data-val="fashion-beauty"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span>موضة وجمال</span><span class="cat-count">0</span></button><button type="button" class="cat-chip" data-act="set-cat" data-val="jobs"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg><span>وظائف</span><span class="cat-count">1</span></button><button type="button" class="cat-chip" data-act="set-cat" data-val="services"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg><span>خدمات</span><span class="cat-count">0</span></button><button type="button" class="cat-chip" data-act="set-cat" data-val="business-industrial"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path></svg><span>تجارة وصناعة</span><span class="cat-count">1</span></button><button type="button" class="cat-chip" data-act="set-cat" data-val="kids-hobbies"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg><span>مستلزمات أطفال وهوايات</span><span class="cat-count">1</span></button></div></div></section><main class="main-area"><div class="container"><div class="stores-panel"><div class="section-head"><div><div class="section-title">🏢 متاجر وشركات موثّقة</div><div class="section-sub">حسابات تجارية وشركات معتمدة بعروض وتواصل مباشر — اضغط للتصفية حسب المتجر</div></div></div><div class="stores-grid"><button type="button" class="store-card" data-act="filter-store" data-id="store-nile-motors"><div class="store-avatar">NM</div><div><div class="store-name">شركة نايل موتورز للسيارات ✓</div><div class="store-meta">شركة ومعرض سيارات معتمد • 📍 القاهرة</div></div></button><button type="button" class="store-card" data-act="filter-store" data-id="store-capital"><div class="store-avatar">CH</div><div><div class="store-name">شركة أفق العاصمة للتطوير العقاري ✓</div><div class="store-meta">شركة تطوير وتسويق عقاري • 📍 العاصمة الإدارية الجديدة</div></div></button><button type="button" class="store-card" data-act="filter-store" data-id="store-waha-home"><div class="store-avatar">WH</div><div><div class="store-name">متجر الواحة للأثاث والتجهيزات ✓</div><div class="store-meta">متجر أثاث منزلي ومكتبي • 📍 الفيوم</div></div></button><button type="button" class="store-card" data-act="filter-store" data-id="store-delta-ind"><div class="store-avatar">DI</div><div><div class="store-name">شركة الدلتا للمعدات وخطوط الإنتاج ✓</div><div class="store-meta">شركة معدات صناعية وتجارية • 📍 الإسكندرية</div></div></button></div></div><div class="feed-toolbar"><div><div class="section-title">أحدث الإعلانات (أفراد ومتاجر وشركات)</div><div class="section-sub">10 إعلان متاح</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;"><button type="button" class="btn btn-outline" data-act="reset">إعادة ضبط</button><select id="sort-select" class="field-control" style="width:auto;height:38px;"><option value="newest" selected="">الأحدث أولاً</option><option value="low-high">السعر: الأقل للأعلى</option><option value="high-low">السعر: الأعلى للأقل</option></select></div></div><div class="listings-grid"><article class="ad-card"><div class="ad-banner personal" data-act="open-ad" data-id="ad-1"><div class="banner-top"><span class="badge badge-personal">👤 معلن فردي</span><button type="button" class="fav-btn" data-act="toggle-save" data-id="ad-1">❤️</button></div><div class="banner-bottom"><span class="banner-icon">🚗</span><span class="banner-cat">سيارات ومركبات</span></div></div><div class="ad-body"><div><div class="ad-price-row"><div class="ad-price">١٬٤٩٠٬٠٠٠ <span style="font-size:12px;">ج.م</span></div><span class="ad-cond">مستعمل</span></div><h3 class="ad-title" data-act="open-ad" data-id="ad-1">هيونداي توسان 2022 فابريكا بالكامل — استخدام طبيب</h3><div class="ad-meta"><span>📍 القاهرة</span><span>د. طارق المنشاوي</span></div></div><div class="ad-actions"><a class="btn btn-whatsapp" href="https://wa.me/201065432198?text=%D9%87%D9%8A%D9%88%D9%86%D8%AF%D8%A7%D9%8A%20%D8%AA%D9%88%D8%B3%D8%A7%D9%86%202022%20%D9%81%D8%A7%D8%A8%D8%B1%D9%8A%D9%83%D8%A7%20%D8%A8%D8%A7%D9%84%D9%83%D8%A7%D9%85%D9%84%20%E2%80%94%20%D8%A7%D8%B3%D8%AA%D8%AE%D8%AF%D8%A7%D9%85%20%D8%B7%D8%A8%D9%8A%D8%A8" target="_blank" rel="noopener noreferrer">💬 واتساب</a><a class="btn btn-outline" href="tel:01065432198">📞 اتصال</a><button type="button" class="btn btn-outline" data-act="open-ad" data-id="ad-1">التفاصيل</button></div></div></article><article class="ad-card"><div class="ad-banner business" data-act="open-ad" data-id="ad-2"><div class="banner-top"><span class="badge badge-business">✓ متجر / شركة موثّق</span><button type="button" class="fav-btn" data-act="toggle-save" data-id="ad-2">❤️</button></div><div class="banner-bottom"><span class="banner-icon">🏢</span><span class="banner-cat">عقارات</span></div></div><div class="ad-body"><div><div class="ad-price-row"><div class="ad-price">٦٬٣٥٠٬٠٠٠ <span style="font-size:12px;">ج.م</span></div><span class="ad-cond">جديد</span></div><h3 class="ad-title" data-act="open-ad" data-id="ad-2">شاليه 115م مفروش بالكامل يرى أبراج العلمين الجديدة</h3><div class="ad-meta"><span>📍 مطروح والعلمين الجديدة</span><button type="button" class="ad-seller-link" data-act="open-store" data-id="store-capital">🏢 شركة أفق العاصمة للتطوير العقاري</button></div></div><div class="ad-actions"><a class="btn btn-whatsapp" href="https://wa.me/201009812450?text=%D8%B4%D8%A7%D9%84%D9%8A%D9%87%20115%D9%85%20%D9%85%D9%81%D8%B1%D9%88%D8%B4%20%D8%A8%D8%A7%D9%84%D9%83%D8%A7%D9%85%D9%84%20%D9%8A%D8%B1%D9%89%20%D8%A3%D8%A8%D8%B1%D8%A7%D8%AC%20%D8%A7%D9%84%D8%B9%D9%84%D9%85%D9%8A%D9%86%20%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF%D8%A9" target="_blank" rel="noopener noreferrer">💬 واتساب</a><a class="btn btn-outline" href="tel:01009812450">📞 اتصال</a><button type="button" class="btn btn-outline" data-act="open-ad" data-id="ad-2">التفاصيل</button></div></div></article><article class="ad-card"><div class="ad-banner personal" data-act="open-ad" data-id="ad-3"><div class="banner-top"><span class="badge badge-personal">👤 معلن فردي</span><button type="button" class="fav-btn" data-act="toggle-save" data-id="ad-3">🤍</button></div><div class="banner-bottom"><span class="banner-icon">📱</span><span class="banner-cat">موبايلات وتابلت</span></div></div><div class="ad-body"><div><div class="ad-price-row"><div class="ad-price">٥٣٬٥٠٠ <span style="font-size:12px;">ج.م</span></div><span class="ad-cond">مستعمل</span></div><h3 class="ad-title" data-act="open-ad" data-id="ad-3">آيفون 15 برو ماكس 256 جيجا تيتانيوم — حالة الزيرو</h3><div class="ad-meta"><span>📍 الجيزة</span><span>كريم عبد الرحمن</span></div></div><div class="ad-actions"><a class="btn btn-whatsapp" href="https://wa.me/201123459876?text=%D8%A2%D9%8A%D9%81%D9%88%D9%86%2015%20%D8%A8%D8%B1%D9%88%20%D9%85%D8%A7%D9%83%D8%B3%20256%20%D8%AC%D9%8A%D8%AC%D8%A7%20%D8%AA%D9%8A%D8%AA%D8%A7%D9%86%D9%8A%D9%88%D9%85%20%E2%80%94%20%D8%AD%D8%A7%D9%84%D8%A9%20%D8%A7%D9%84%D8%B2%D9%8A%D8%B1%D9%88" target="_blank" rel="noopener noreferrer">💬 واتساب</a><a class="btn btn-outline" href="tel:01123459876">📞 اتصال</a><button type="button" class="btn btn-outline" data-act="open-ad" data-id="ad-3">التفاصيل</button></div></div></article><article class="ad-card"><div class="ad-banner business" data-act="open-ad" data-id="ad-4"><div class="banner-top"><span class="badge badge-business">✓ متجر / شركة موثّق</span><button type="button" class="fav-btn" data-act="toggle-save" data-id="ad-4">🤍</button></div><div class="banner-bottom"><span class="banner-icon">🚗</span><span class="banner-cat">سيارات ومركبات</span></div></div><div class="ad-body"><div><div class="ad-price-row"><div class="ad-price">١٬٣٦٠٬٠٠٠ <span style="font-size:12px;">ج.م</span></div><span class="ad-cond">مستعمل</span></div><h3 class="ad-title" data-act="open-ad" data-id="ad-4">تويوتا كورولا 2024 فئة ثانية كسر زيرو 9,000 كم</h3><div class="ad-meta"><span>📍 القاهرة</span><button type="button" class="ad-seller-link" data-act="open-store" data-id="store-nile-motors">🏢 شركة نايل موتورز للسيارات</button></div></div><div class="ad-actions"><a class="btn btn-whatsapp" href="https://wa.me/201119405520?text=%D8%AA%D9%88%D9%8A%D9%88%D8%AA%D8%A7%20%D9%83%D9%88%D8%B1%D9%88%D9%84%D8%A7%202024%20%D9%81%D8%A6%D8%A9%20%D8%AB%D8%A7%D9%86%D9%8A%D8%A9%20%D9%83%D8%B3%D8%B1%20%D8%B2%D9%8A%D8%B1%D9%88%209%2C000%20%D9%83%D9%85" target="_blank" rel="noopener noreferrer">💬 واتساب</a><a class="btn btn-outline" href="tel:01119405520">📞 اتصال</a><button type="button" class="btn btn-outline" data-act="open-ad" data-id="ad-4">التفاصيل</button></div></div></article><article class="ad-card"><div class="ad-banner personal" data-act="open-ad" data-id="ad-5"><div class="banner-top"><span class="badge badge-personal">👤 معلن فردي</span><button type="button" class="fav-btn" data-act="toggle-save" data-id="ad-5">🤍</button></div><div class="banner-bottom"><span class="banner-icon">🏢</span><span class="banner-cat">عقارات</span></div></div><div class="ad-body"><div><div class="ad-price-row"><div class="ad-price">١٬٨٥٠٬٠٠٠ <span style="font-size:12px;">ج.م</span></div><span class="ad-cond">مستعمل</span></div><h3 class="ad-title" data-act="open-ad" data-id="ad-5">شقة 145م تشطيب سوبر لوكس بحي الجامعة بالفيوم</h3><div class="ad-meta"><span>📍 الفيوم</span><span>م. محمود سالم</span></div></div><div class="ad-actions"><a class="btn btn-whatsapp" href="https://wa.me/201098765432?text=%D8%B4%D9%82%D8%A9%20145%D9%85%20%D8%AA%D8%B4%D8%B7%D9%8A%D8%A8%20%D8%B3%D9%88%D8%A8%D8%B1%20%D9%84%D9%88%D9%83%D8%B3%20%D8%A8%D8%AD%D9%8A%20%D8%A7%D9%84%D8%AC%D8%A7%D9%85%D8%B9%D8%A9%20%D8%A8%D8%A7%D9%84%D9%81%D9%8A%D9%88%D9%85" target="_blank" rel="noopener noreferrer">💬 واتساب</a><a class="btn btn-outline" href="tel:01098765432">📞 اتصال</a><button type="button" class="btn btn-outline" data-act="open-ad" data-id="ad-5">التفاصيل</button></div></div></article><article class="ad-card"><div class="ad-banner business" data-act="open-ad" data-id="ad-6"><div class="banner-top"><span class="badge badge-business">✓ متجر / شركة موثّق</span><button type="button" class="fav-btn" data-act="toggle-save" data-id="ad-6">🤍</button></div><div class="banner-bottom"><span class="banner-icon">🛋️</span><span class="banner-cat">أثاث وديكور المنزل</span></div></div><div class="ad-body"><div><div class="ad-price-row"><div class="ad-price">٩٬٤٠٠ <span style="font-size:12px;">ج.م</span></div><span class="ad-cond">جديد</span></div><h3 class="ad-title" data-act="open-ad" data-id="ad-6">طقم مكتب إداري 180 سم خشب زان + كرسي طبي هيدروليك</h3><div class="ad-meta"><span>📍 الفيوم</span><button type="button" class="ad-seller-link" data-act="open-store" data-id="store-waha-home">🏢 متجر الواحة للأثاث والتجهيزات</button></div></div><div class="ad-actions"><a class="btn btn-whatsapp" href="https://wa.me/201014829310?text=%D8%B7%D9%82%D9%85%20%D9%85%D9%83%D8%AA%D8%A8%20%D8%A5%D8%AF%D8%A7%D8%B1%D9%8A%20180%20%D8%B3%D9%85%20%D8%AE%D8%B4%D8%A8%20%D8%B2%D8%A7%D9%86%20%2B%20%D9%83%D8%B1%D8%B3%D9%8A%20%D8%B7%D8%A8%D9%8A%20%D9%87%D9%8A%D8%AF%D8%B1%D9%88%D9%84%D9%8A%D9%83" target="_blank" rel="noopener noreferrer">💬 واتساب</a><a class="btn btn-outline" href="tel:01014829310">📞 اتصال</a><button type="button" class="btn btn-outline" data-act="open-ad" data-id="ad-6">التفاصيل</button></div></div></article><article class="ad-card"><div class="ad-banner personal" data-act="open-ad" data-id="ad-7"><div class="banner-top"><span class="badge badge-personal">👤 معلن فردي</span><button type="button" class="fav-btn" data-act="toggle-save" data-id="ad-7">🤍</button></div><div class="banner-bottom"><span class="banner-icon">💻</span><span class="banner-cat">إلكترونيات وأجهزة منزلية</span></div></div><div class="ad-body"><div><div class="ad-price-row"><div class="ad-price">٥٨٬٠٠٠ <span style="font-size:12px;">ج.م</span></div><span class="ad-cond">مستعمل</span></div><h3 class="ad-title" data-act="open-ad" data-id="ad-7">لابتوب MacBook Pro M2 رام 16 جيجا SSD 512 — كالجديد</h3><div class="ad-meta"><span>📍 الإسكندرية</span><span>سلمى الشاذلي</span></div></div><div class="ad-actions"><a class="btn btn-whatsapp" href="https://wa.me/201276543210?text=%D9%84%D8%A7%D8%A8%D8%AA%D9%88%D8%A8%20MacBook%20Pro%20M2%20%D8%B1%D8%A7%D9%85%2016%20%D8%AC%D9%8A%D8%AC%D8%A7%20SSD%20512%20%E2%80%94%20%D9%83%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF" target="_blank" rel="noopener noreferrer">💬 واتساب</a><a class="btn btn-outline" href="tel:01276543210">📞 اتصال</a><button type="button" class="btn btn-outline" data-act="open-ad" data-id="ad-7">التفاصيل</button></div></div></article><article class="ad-card"><div class="ad-banner business" data-act="open-ad" data-id="ad-8"><div class="banner-top"><span class="badge badge-business">✓ متجر / شركة موثّق</span><button type="button" class="fav-btn" data-act="toggle-save" data-id="ad-8">🤍</button></div><div class="banner-bottom"><span class="banner-icon">🏭</span><span class="banner-cat">تجارة وصناعة</span></div></div><div class="ad-body"><div><div class="ad-price-row"><div class="ad-price">١١٥٬٠٠٠ <span style="font-size:12px;">ج.م</span></div><span class="ad-cond">جديد</span></div><h3 class="ad-title" data-act="open-ad" data-id="ad-8">ماكينة تعبئة وتغليف أوتوماتيك للمواد الغذائية والحبوب</h3><div class="ad-meta"><span>📍 الإسكندرية</span><button type="button" class="ad-seller-link" data-act="open-store" data-id="store-delta-ind">🏢 شركة الدلتا للمعدات وخطوط الإنتاج</button></div></div><div class="ad-actions"><a class="btn btn-whatsapp" href="https://wa.me/201228941120?text=%D9%85%D8%A7%D9%83%D9%8A%D9%86%D8%A9%20%D8%AA%D8%B9%D8%A8%D8%A6%D8%A9%20%D9%88%D8%AA%D8%BA%D9%84%D9%8A%D9%81%20%D8%A3%D9%88%D8%AA%D9%88%D9%85%D8%A7%D8%AA%D9%8A%D9%83%20%D9%84%D9%84%D9%85%D9%88%D8%A7%D8%AF%20%D8%A7%D9%84%D8%BA%D8%B0%D8%A7%D8%A6%D9%8A%D8%A9%20%D9%88%D8%A7%D9%84%D8%AD%D8%A8%D9%88%D8%A8" target="_blank" rel="noopener noreferrer">💬 واتساب</a><a class="btn btn-outline" href="tel:01228941120">📞 اتصال</a><button type="button" class="btn btn-outline" data-act="open-ad" data-id="ad-8">التفاصيل</button></div></div></article><article class="ad-card"><div class="ad-banner personal" data-act="open-ad" data-id="ad-9"><div class="banner-top"><span class="badge badge-personal">👤 معلن فردي</span><button type="button" class="fav-btn" data-act="toggle-save" data-id="ad-9">🤍</button></div><div class="banner-bottom"><span class="banner-icon">🧸</span><span class="banner-cat">مستلزمات أطفال وهوايات</span></div></div><div class="ad-body"><div><div class="ad-price-row"><div class="ad-price">٤٬٢٠٠ <span style="font-size:12px;">ج.م</span></div><span class="ad-cond">مستعمل</span></div><h3 class="ad-title" data-act="open-ad" data-id="ad-9">عربية أطفال Chicco قابلة للطي كالجديدة + كرسي سيارة</h3><div class="ad-meta"><span>📍 الأقصر</span><span>نورهان عبد الله</span></div></div><div class="ad-actions"><a class="btn btn-whatsapp" href="https://wa.me/201055443322?text=%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9%20%D8%A3%D8%B7%D9%81%D8%A7%D9%84%20Chicco%20%D9%82%D8%A7%D8%A8%D9%84%D8%A9%20%D9%84%D9%84%D8%B7%D9%8A%20%D9%83%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF%D8%A9%20%2B%20%D9%83%D8%B1%D8%B3%D9%8A%20%D8%B3%D9%8A%D8%A7%D8%B1%D8%A9" target="_blank" rel="noopener noreferrer">💬 واتساب</a><a class="btn btn-outline" href="tel:01055443322">📞 اتصال</a><button type="button" class="btn btn-outline" data-act="open-ad" data-id="ad-9">التفاصيل</button></div></div></article><article class="ad-card"><div class="ad-banner business" data-act="open-ad" data-id="ad-10"><div class="banner-top"><span class="badge badge-business">✓ متجر / شركة موثّق</span><button type="button" class="fav-btn" data-act="toggle-save" data-id="ad-10">🤍</button></div><div class="banner-bottom"><span class="banner-icon">💼</span><span class="banner-cat">وظائف</span></div></div><div class="ad-body"><div><div class="ad-price-row"><div class="ad-price">١٨٬٠٠٠ <span style="font-size:12px;">ج.م</span></div><span class="ad-cond">جديد</span></div><h3 class="ad-title" data-act="open-ad" data-id="ad-10">مطلوب مهندسين مبيعات عقارية للعمل بالعاصمة الإدارية</h3><div class="ad-meta"><span>📍 العاصمة الإدارية الجديدة</span><button type="button" class="ad-seller-link" data-act="open-store" data-id="store-capital">🏢 شركة أفق العاصمة للتطوير العقاري</button></div></div><div class="ad-actions"><a class="btn btn-whatsapp" href="https://wa.me/201009812450?text=%D9%85%D8%B7%D9%84%D9%88%D8%A8%20%D9%85%D9%87%D9%86%D8%AF%D8%B3%D9%8A%D9%86%20%D9%85%D8%A8%D9%8A%D8%B9%D8%A7%D8%AA%20%D8%B9%D9%82%D8%A7%D8%B1%D9%8A%D8%A9%20%D9%84%D9%84%D8%B9%D9%85%D9%84%20%D8%A8%D8%A7%D9%84%D8%B9%D8%A7%D8%B5%D9%85%D8%A9%20%D8%A7%D9%84%D8%A5%D8%AF%D8%A7%D8%B1%D9%8A%D8%A9" target="_blank" rel="noopener noreferrer">💬 واتساب</a><a class="btn btn-outline" href="tel:01009812450">📞 اتصال</a><button type="button" class="btn btn-outline" data-act="open-ad" data-id="ad-10">التفاصيل</button></div></div></article></div></div></main><footer class="footer"><div class="container footer-inner"><div><div style="font-weight:800;color:#ffffff;font-size:14px;">لقطة Laqta</div><div style="font-size:12px;color:#94A3B8;margin-top:3px;">منصة لقطة — سوق مصر المتوازن للإعلانات الفردية ومتاجر وشركات معتمدة في 27 محافظة.</div></div><button type="button" class="btn btn-primary" data-act="download-html">⬇️ تحميل ملف index.html لرفعه على Netlify</button></div></footer></div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* =======================================================================
+       * 1. BILINGUAL STRINGS (ARABIC RTL DEFAULT / ENGLISH LTR)
+       * ======================================================================= */
+      const TEXT = {
+        ar: {
+          brandName: "لقطة",
+          brandEn: "Laqta",
+          brandSub: "سوق الأفراد ومتاجر وشركات مصر",
+          langToggle: "English",
+          savedBtn: "المفضلة",
+          postAdBtn: "أضف إعلانك",
+          heroTag: "🇪🇬 تغطية شاملة لـ 27 محافظة والمدن الجديدة",
+          heroTitle: "بيع واشتري مباشرة من الأفراد أو من متاجر وشركات موثقة في مصر",
+          heroSub: "منصة مصرية متوازنة تجمع إعلانات الأفراد المباشرة مع كتالوجات متاجر وشركات معتمدة في جميع المحافظات.",
+          searchPh: "ابحث عن سيارة، عقار، موبايل، أثاث، وظيفة، أو اسم متجر وشركة...",
+          allGovs: "كل المحافظات (27)",
+          searchBtn: "بحث",
+          modeAll: "الكل (أفراد + متاجر)",
+          modePersonal: "إعلانات الأفراد",
+          modeBusiness: "متاجر وشركات",
+          allCats: "كل الأقسام (10)",
+          resetBtn: "إعادة ضبط",
+          storesHeading: "متاجر وشركات موثّقة",
+          storesSub: "حسابات تجارية وشركات معتمدة بعروض وتواصل مباشر — اضغط للتصفية حسب المتجر",
+          clearStoreFilter: "عرض كل المتاجر والإعلانات",
+          feedHeadingAll: "أحدث الإعلانات (أفراد ومتاجر وشركات)",
+          feedHeadingPersonal: "إعلانات الأفراد المباشرة",
+          feedHeadingBusiness: "عروض وإعلانات متاجر وشركات",
+          feedHeadingSaved: "الإعلانات المحفوظة في المفضلة",
+          resultsLabel: "{n} إعلان متاح",
+          sortNewest: "الأحدث أولاً",
+          sortLowHigh: "السعر: الأقل للأعلى",
+          sortHighLow: "السعر: الأعلى للأقل",
+          badgePersonal: "معلن فردي",
+          badgeBusiness: "متجر / شركة موثّق",
+          condNew: "جديد",
+          condUsed: "مستعمل",
+          egp: "ج.م",
+          whatsapp: "واتساب",
+          call: "اتصال",
+          details: "التفاصيل",
+          share: "مشاركة الرابط",
+          viewStoreAdsBtn: "عرض كل إعلانات المتجر / الشركة",
+          storeAdsTitle: "إعلانات هذا المتجر / الشركة",
+          emptyTitle: "لا توجد إعلانات مطابقة لبحثك الحالي",
+          emptySub: "جرّب الضغط على (الكل) أو تغيير المحافظة أو مسح كلمات البحث.",
+          postTitle: "نشر إعلان جديد على لقطة",
+          postStep: "الخطوة 1: حدد نوع المعلن (إعلان فردي أم متجر / شركة) ثم أكمل البيانات",
+          sellerTypeLabel: "نوع الحساب / المعلن",
+          typePersonalTitle: "إعلان فردي",
+          typePersonalDesc: "بيع غرض شخصي، سيارة، أو عقار مباشرة من المالك",
+          typeBusinessTitle: "متجر أو شركة",
+          typeBusinessDesc: "عرض منتجات أو خدمات باسم متجرك أو شركتك التجارية",
+          fieldTitle: "عنوان الإعلان *",
+          fieldTitlePh: "مثال: شاليه بالعلمين الجديدة أو تويوتا كورولا 2024",
+          fieldCategory: "القسم *",
+          fieldGov: "المحافظة *",
+          fieldCondition: "الحالة",
+          fieldPrice: "السعر بالجنيه (ج.م) *",
+          fieldSeller: "اسم المعلن أو المتجر / الشركة *",
+          fieldSellerPh: "مثال: أحمد محمود أو شركة أفق العاصمة",
+          fieldPhone: "رقم الموبايل / واتساب *",
+          fieldDesc: "تفاصيل الإعلان",
+          fieldDescPh: "اكتب المواصفات، الحالة، أو طريقة المعاينة...",
+          publishBtn: "نشر الإعلان الآن",
+          cancelBtn: "إلغاء",
+          formErr: "يرجى إدخال العنوان، السعر الصحيح، الاسم، ورقم موبايل مصري من 11 رقم.",
+          toastPublished: "تم نشر إعلانك بنجاح في القائمة المباشرة!",
+          toastSaved: "تم تحديث قائمة المفضلة",
+          toastShared: "تم نسخ بيانات الإعلان للمشاركة",
+          toastDownloaded: "تم تنزيل ملف index.html الجاهز للرفع على Netlify",
+          downloadBtn: "تحميل ملف index.html لرفعه على Netlify",
+          footerNote: "منصة لقطة — سوق مصر المتوازن للإعلانات الفردية ومتاجر وشركات معتمدة في 27 محافظة."
+        },
+        en: {
+          brandName: "Laqta",
+          brandEn: "لقطة",
+          brandSub: "Egypt's Personal Classifieds, Stores & Companies",
+          langToggle: "العربية",
+          savedBtn: "Saved",
+          postAdBtn: "Post Ad",
+          heroTag: "🇪🇬 Full Coverage Across All 27 Egyptian Governorates & New Cities",
+          heroTitle: "Buy & Sell Directly From Individuals or Verified Stores & Companies in Egypt",
+          heroSub: "A balanced Egyptian marketplace uniting peer-to-peer classifieds with verified Store & Company catalogs across all governorates.",
+          searchPh: "Search cars, real estate, phones, furniture, jobs, or a store/company...",
+          allGovs: "All Governorates (27)",
+          searchBtn: "Search",
+          modeAll: "All (Personal + Stores)",
+          modePersonal: "Personal Ads",
+          modeBusiness: "Stores & Companies",
+          allCats: "All Categories (10)",
+          resetBtn: "Reset",
+          storesHeading: "Verified Stores & Companies",
+          storesSub: "Certified commercial accounts and corporate storefronts — tap to filter by store",
+          clearStoreFilter: "Show All Stores & Listings",
+          feedHeadingAll: "Latest Listings (Personal & Stores/Companies)",
+          feedHeadingPersonal: "Direct Personal Classified Ads",
+          feedHeadingBusiness: "Verified Stores & Companies Listings",
+          feedHeadingSaved: "Saved Favorites",
+          resultsLabel: "{n} listings available",
+          sortNewest: "Newest First",
+          sortLowHigh: "Price: Low to High",
+          sortHighLow: "Price: High to Low",
+          badgePersonal: "Individual",
+          badgeBusiness: "Verified Store & Company",
+          condNew: "New",
+          condUsed: "Used",
+          egp: "EGP",
+          whatsapp: "WhatsApp",
+          call: "Call",
+          details: "Details",
+          share: "Share Link",
+          viewStoreAdsBtn: "View All Store / Company Listings",
+          storeAdsTitle: "Listings by this Store / Company",
+          emptyTitle: "No listings match your current filters",
+          emptySub: "Try switching to All, selecting another governorate, or clearing search terms.",
+          postTitle: "Post a New Listing on Laqta",
+          postStep: "Step 1: Choose account type (Personal Ad or Store/Company) then fill details",
+          sellerTypeLabel: "Seller Type",
+          typePersonalTitle: "Personal Ad",
+          typePersonalDesc: "Sell a personal item, car, or property directly peer-to-peer",
+          typeBusinessTitle: "Store or Company",
+          typeBusinessDesc: "List products or services under your Store or Company brand",
+          fieldTitle: "Listing Title *",
+          fieldTitlePh: "e.g. New Alamein Chalet or 2024 Toyota Corolla",
+          fieldCategory: "Category *",
+          fieldGov: "Governorate *",
+          fieldCondition: "Condition",
+          fieldPrice: "Price in EGP *",
+          fieldSeller: "Seller or Store / Company Name *",
+          fieldSellerPh: "e.g. Ahmed Mahmoud or Capital Horizon Co.",
+          fieldPhone: "Mobile / WhatsApp Number *",
+          fieldDesc: "Description",
+          fieldDescPh: "Include specs, condition, and viewing location...",
+          publishBtn: "Publish Listing Now",
+          cancelBtn: "Cancel",
+          formErr: "Please enter a title, valid price, seller/company name, and an 11-digit Egyptian mobile number.",
+          toastPublished: "Your listing is now live in the marketplace!",
+          toastSaved: "Updated saved favorites",
+          toastShared: "Listing summary copied to clipboard",
+          toastDownloaded: "Downloaded standalone index.html ready for Netlify",
+          downloadBtn: "Download index.html for Netlify",
+          footerNote: "Laqta — Egypt's balanced marketplace for personal classifieds, verified stores & companies across 27 governorates."
+        }
+      };
+
+      /* =======================================================================
+       * 2. ALL 10 MARKETPLACE CATEGORIES WITH INLINE SVG ICONS
+       * ======================================================================= */
+      const CATEGORIES = [
+        {
+          id: "vehicles",
+          ar: "سيارات ومركبات",
+          en: "Vehicles",
+          emoji: "🚗",
+          svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>'
+        },
+        {
+          id: "real-estate",
+          ar: "عقارات",
+          en: "Properties",
+          emoji: "🏢",
+          svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>'
+        },
+        {
+          id: "mobiles-tablets",
+          ar: "موبايلات وتابلت",
+          en: "Mobiles & Tablets",
+          emoji: "📱",
+          svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>'
+        },
+        {
+          id: "electronics-appliances",
+          ar: "إلكترونيات وأجهزة منزلية",
+          en: "Electronics & Appliances",
+          emoji: "💻",
+          svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'
+        },
+        {
+          id: "home-office",
+          ar: "أثاث وديكور المنزل",
+          en: "Home, Furniture & Decor",
+          emoji: "🛋️",
+          svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H6v-2a2 2 0 0 0-4 0Z"/></svg>'
+        },
+        {
+          id: "fashion-beauty",
+          ar: "موضة وجمال",
+          en: "Fashion & Beauty",
+          emoji: "✨",
+          svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>'
+        },
+        {
+          id: "jobs",
+          ar: "وظائف",
+          en: "Jobs",
+          emoji: "💼",
+          svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>'
+        },
+        {
+          id: "services",
+          ar: "خدمات",
+          en: "Services",
+          emoji: "🛠️",
+          svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'
+        },
+        {
+          id: "business-industrial",
+          ar: "تجارة وصناعة",
+          en: "Business & Industrial",
+          emoji: "🏭",
+          svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg>'
+        },
+        {
+          id: "kids-hobbies",
+          ar: "مستلزمات أطفال وهوايات",
+          en: "Kids & Hobbies",
+          emoji: "🧸",
+          svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>'
+        }
+      ];
+
+      /* =======================================================================
+       * 3. ALL 27 EGYPTIAN GOVERNORATES + KEY HUBS
+       * ======================================================================= */
+      const GOVERNORATES = [
+        { id: "cairo", ar: "القاهرة", en: "Cairo" },
+        { id: "new-capital", ar: "العاصمة الإدارية الجديدة", en: "New Administrative Capital" },
+        { id: "giza", ar: "الجيزة", en: "Giza" },
+        { id: "alexandria", ar: "الإسكندرية", en: "Alexandria" },
+        { id: "faiyum", ar: "الفيوم", en: "Faiyum" },
+        { id: "matrouh", ar: "مطروح والعلمين الجديدة", en: "Matrouh & New Alamein" },
+        { id: "luxor", ar: "الأقصر", en: "Luxor" },
+        { id: "aswan", ar: "أسوان", en: "Aswan" },
+        { id: "red-sea", ar: "البحر الأحمر", en: "Red Sea" },
+        { id: "south-sinai", ar: "جنوب سيناء", en: "South Sinai" },
+        { id: "north-sinai", ar: "شمال سيناء", en: "North Sinai" },
+        { id: "dakahlia", ar: "الدقهلية", en: "Dakahlia" },
+        { id: "sharqia", ar: "الشرقية", en: "Sharqia" },
+        { id: "gharbia", ar: "الغربية", en: "Gharbia" },
+        { id: "menoufia", ar: "المنوفية", en: "Menoufia" },
+        { id: "beheira", ar: "البحيرة", en: "Beheira" },
+        { id: "kafr-el-sheikh", ar: "كفر الشيخ", en: "Kafr El Sheikh" },
+        { id: "damietta", ar: "دمياط", en: "Damietta" },
+        { id: "port-said", ar: "بورسعيد", en: "Port Said" },
+        { id: "ismailia", ar: "الإسماعيلية", en: "Ismailia" },
+        { id: "suez", ar: "السويس والعين السخنة", en: "Suez & Ain Sokhna" },
+        { id: "qalyubia", ar: "القليوبية", en: "Qalyubia" },
+        { id: "beni-suef", ar: "بني سويف", en: "Beni Suef" },
+        { id: "minya", ar: "المنيا", en: "Minya" },
+        { id: "assiut", ar: "أسيوط", en: "Assiut" },
+        { id: "sohag", ar: "سوهاج", en: "Sohag" },
+        { id: "qena", ar: "قنا", en: "Qena" },
+        { id: "new-valley", ar: "الوادي الجديد", en: "New Valley" }
+      ];
+
+      /* =======================================================================
+       * 4. VERIFIED STORES & COMPANIES DIRECTORY
+       * ======================================================================= */
+      const STORES = [
+        {
+          id: "store-nile-motors",
+          nameAr: "شركة نايل موتورز للسيارات",
+          nameEn: "Nile Motors Automotive Co.",
+          typeAr: "شركة ومعرض سيارات معتمد",
+          typeEn: "Certified Automotive Showroom",
+          govId: "cairo",
+          phone: "01119405520",
+          initials: "NM",
+          bioAr: "بيع واستبدال السيارات الزيرو وكسر الزيرو بتقرير فحص فني شامل وتقسيط بنكي ومباشر.",
+          bioEn: "New and certified pre-owned cars with full technical inspection reports and flexible financing."
+        },
+        {
+          id: "store-capital",
+          nameAr: "شركة أفق العاصمة للتطوير العقاري",
+          nameEn: "Capital Horizon Real Estate Co.",
+          typeAr: "شركة تطوير وتسويق عقاري",
+          typeEn: "Real Estate Development Co.",
+          govId: "new-capital",
+          phone: "01009812450",
+          initials: "CH",
+          bioAr: "وحدات سكنية، إدارية، وشاليهات في العاصمة الإدارية الجديدة والعلمين الجديدة والعين السخنة.",
+          bioEn: "Residential, administrative, and coastal units in New Capital, New Alamein, and Ain Sokhna."
+        },
+        {
+          id: "store-waha-home",
+          nameAr: "متجر الواحة للأثاث والتجهيزات",
+          nameEn: "Al-Waha Home & Office Store",
+          typeAr: "متجر أثاث منزلي ومكتبي",
+          typeEn: "Home & Office Furniture Store",
+          govId: "faiyum",
+          phone: "01014829310",
+          initials: "WH",
+          bioAr: "تصنيع وتوريد الأثاث المنزلي والمكتبي من خشب الزان الطبيعي مع التوصيل لجميع المحافظات.",
+          bioEn: "Handcrafted beechwood home and office furniture with nationwide delivery across Egypt."
+        },
+        {
+          id: "store-delta-ind",
+          nameAr: "شركة الدلتا للمعدات وخطوط الإنتاج",
+          nameEn: "Delta Industrial & Commercial Co.",
+          typeAr: "شركة معدات صناعية وتجارية",
+          typeEn: "Industrial & Commercial Co.",
+          govId: "alexandria",
+          phone: "01228941120",
+          initials: "DI",
+          bioAr: "توريد ماكينات التعبئة والتغليف ومعدات المطاعم والمصانع بضمان وقطع غيار أصلية.",
+          bioEn: "Packaging machinery, commercial kitchen lines, and factory equipment with full warranty."
+        }
+      ];
+
+      /* =======================================================================
+       * 5. EQUAL 50/50 SEED LISTINGS (5 PERSONAL + 5 STORES/COMPANIES)
+       * ======================================================================= */
+      const INITIAL_LISTINGS = [
+        {
+          id: "ad-1",
+          sellerType: "personal",
+          storeId: null,
+          titleAr: "هيونداي توسان 2022 فابريكا بالكامل — استخدام طبيب",
+          titleEn: "2022 Hyundai Tucson Original Paint — Single Owner",
+          descAr: "عداد 41,000 كم، صيانات توكيل منتظمة بالفواتير، رخصة سارية سنتين، المعاينة في مدينة نصر.",
+          descEn: "41,000 km, full authorized dealer maintenance records, 2-year license, Nasr City viewing.",
+          categoryId: "vehicles",
+          govId: "cairo",
+          condition: "used",
+          price: 1490000,
+          sellerName: "د. طارق المنشاوي",
+          phone: "01065432198",
+          createdAt: 10
+        },
+        {
+          id: "ad-2",
+          sellerType: "business",
+          storeId: "store-capital",
+          titleAr: "شاليه 115م مفروش بالكامل يرى أبراج العلمين الجديدة",
+          titleEn: "115sqm Furnished Chalet Overlooking New Alamein Towers",
+          descAr: "غرفتين نوم، 2 حمام، تشطيب الترا سوبر لوكس بالتكييفات والأجهزة واستلام فوري.",
+          descEn: "2 bedrooms, 2 bathrooms, ultra-super-lux finishing with ACs and appliances, ready to move.",
+          categoryId: "real-estate",
+          govId: "matrouh",
+          condition: "new",
+          price: 6350000,
+          sellerName: "شركة أفق العاصمة للتطوير العقاري",
+          phone: "01009812450",
+          createdAt: 9
+        },
+        {
+          id: "ad-3",
+          sellerType: "personal",
+          storeId: null,
+          titleAr: "آيفون 15 برو ماكس 256 جيجا تيتانيوم — حالة الزيرو",
+          titleEn: "iPhone 15 Pro Max 256GB Natural Titanium — Mint",
+          descAr: "بطارية 98%، بالعلبة والكابل الأصلي بدون أي خدوش نهائياً، البيع للتحديث.",
+          descEn: "98% battery health, original box and cable, zero scratches, selling due to upgrade.",
+          categoryId: "mobiles-tablets",
+          govId: "giza",
+          condition: "used",
+          price: 53500,
+          sellerName: "كريم عبد الرحمن",
+          phone: "01123459876",
+          createdAt: 8
+        },
+        {
+          id: "ad-4",
+          sellerType: "business",
+          storeId: "store-nile-motors",
+          titleAr: "تويوتا كورولا 2024 فئة ثانية كسر زيرو 9,000 كم",
+          titleEn: "2024 Toyota Corolla Mid-Option — 9,000 km Certified",
+          descAr: "فابريكا بالكامل من الإكصدام للإكصدام، متاح تقسيط بنكي بمقدم 25% واستلام فوري.",
+          descEn: "100% original factory paint, bank financing available from 25% down payment.",
+          categoryId: "vehicles",
+          govId: "cairo",
+          condition: "used",
+          price: 1360000,
+          sellerName: "شركة نايل موتورز للسيارات",
+          phone: "01119405520",
+          createdAt: 7
+        },
+        {
+          id: "ad-5",
+          sellerType: "personal",
+          storeId: null,
+          titleAr: "شقة 145م تشطيب سوبر لوكس بحي الجامعة بالفيوم",
+          titleEn: "145sqm Super-Lux Apartment in University District, Faiyum",
+          descAr: "دور ثالث أسانسير، 3 غرف نوم وريسبشن قطعتين، عداد كهرباء وغاز طبيعي، من المالك مباشرة.",
+          descEn: "3rd floor with elevator, 3 bedrooms, 2-piece reception, natural gas & electricity, direct owner.",
+          categoryId: "real-estate",
+          govId: "faiyum",
+          condition: "used",
+          price: 1850000,
+          sellerName: "م. محمود سالم",
+          phone: "01098765432",
+          createdAt: 6
+        },
+        {
+          id: "ad-6",
+          sellerType: "business",
+          storeId: "store-waha-home",
+          titleAr: "طقم مكتب إداري 180 سم خشب زان + كرسي طبي هيدروليك",
+          titleEn: "180cm Beechwood Executive Desk Set + Ergonomic Chair",
+          descAr: "تصنيع متجر الواحة بضمان 3 سنوات، شامل وحدة أدراج وتوصيل للقاهرة والجيزة والفيوم.",
+          descEn: "Crafted by Al-Waha Store with 3-year warranty, mobile drawer unit, delivery across Egypt.",
+          categoryId: "home-office",
+          govId: "faiyum",
+          condition: "new",
+          price: 9400,
+          sellerName: "متجر الواحة للأثاث والتجهيزات",
+          phone: "01014829310",
+          createdAt: 5
+        },
+        {
+          id: "ad-7",
+          sellerType: "personal",
+          storeId: null,
+          titleAr: "لابتوب MacBook Pro M2 رام 16 جيجا SSD 512 — كالجديد",
+          titleEn: "MacBook Pro M2 16GB RAM / 512GB SSD — Like New",
+          descAr: "عدد دورات الشحن 48 فقط، بالشاحن الأصلي والعلبة، مناسب للبرمجة والمونتاج.",
+          descEn: "Only 48 charge cycles, original charger and box included, ideal for coding & editing.",
+          categoryId: "electronics-appliances",
+          govId: "alexandria",
+          condition: "used",
+          price: 58000,
+          sellerName: "سلمى الشاذلي",
+          phone: "01276543210",
+          createdAt: 4
+        },
+        {
+          id: "ad-8",
+          sellerType: "business",
+          storeId: "store-delta-ind",
+          titleAr: "ماكينة تعبئة وتغليف أوتوماتيك للمواد الغذائية والحبوب",
+          titleEn: "Automatic Food & Grain Packaging Machine (Stainless 304)",
+          descAr: "استانلس ستيل 304 غذائي، سرعة حتى 45 عبوة/دقيقة، ضمان شامل وتدريب فريق التشغيل.",
+          descEn: "Food-grade 304 stainless steel, up to 45 packs/min, full warranty and operator training.",
+          categoryId: "business-industrial",
+          govId: "alexandria",
+          condition: "new",
+          price: 115000,
+          sellerName: "شركة الدلتا للمعدات وخطوط الإنتاج",
+          phone: "01228941120",
+          createdAt: 3
+        },
+        {
+          id: "ad-9",
+          sellerType: "personal",
+          storeId: null,
+          titleAr: "عربية أطفال Chicco قابلة للطي كالجديدة + كرسي سيارة",
+          titleEn: "Foldable Chicco Baby Stroller + Car Seat — Like New",
+          descAr: "استخدام خفيف جداً لمدة 4 شهور، نظيفة بالكامل وسهلة الطي في شنطة السيارة.",
+          descEn: "Lightly used for 4 months, spotless and folds compactly into any car trunk.",
+          categoryId: "kids-hobbies",
+          govId: "luxor",
+          condition: "used",
+          price: 4200,
+          sellerName: "نورهان عبد الله",
+          phone: "01055443322",
+          createdAt: 2
+        },
+        {
+          id: "ad-10",
+          sellerType: "business",
+          storeId: "store-capital",
+          titleAr: "مطلوب مهندسين مبيعات عقارية للعمل بالعاصمة الإدارية",
+          titleEn: "Hiring Senior Property Consultants — New Administrative Capital",
+          descAr: "راتب ثابت مجزي + عمولات مرتفعة وتأمينات طبية واجتماعية وانتقالات.",
+          descEn: "Competitive fixed salary + high commissions, medical/social insurance, and transportation.",
+          categoryId: "jobs",
+          govId: "new-capital",
+          condition: "new",
+          price: 18000,
+          sellerName: "شركة أفق العاصمة للتطوير العقاري",
+          phone: "01009812450",
+          createdAt: 1
+        }
+      ];
+
+      /* =======================================================================
+       * 6. SAFE STORAGE & APPLICATION STATE
+       * ======================================================================= */
+      const STORAGE_KEY = "laqta_safe_listings_v1";
+
+      function readStoredListings() {
+        try {
+          const raw = window.localStorage.getItem(STORAGE_KEY);
+          if (!raw) return INITIAL_LISTINGS.slice();
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) && parsed.length ? parsed : INITIAL_LISTINGS.slice();
+        } catch (err) {
+          return INITIAL_LISTINGS.slice();
+        }
+      }
+
+      function writeStoredListings(items) {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        } catch (err) {
+          // Safe fallback when sandboxed iframe blocks localStorage
+        }
+      }
+
+      const state = {
+        lang: "ar",
+        mode: "all", // "all" | "personal" | "business" | "saved"
+        category: "all",
+        gov: "all",
+        selectedStoreFilter: null,
+        query: "",
+        sort: "newest",
+        listings: readStoredListings(),
+        savedIds: ["ad-1", "ad-2"],
+        activeAdId: null,
+        activeStoreId: null,
+        postOpen: false,
+        postType: "personal",
+        postError: "",
+        toast: ""
+      };
+
+      function t(key, vars) {
+        let str = (TEXT[state.lang] && TEXT[state.lang][key]) || key;
+        if (vars) {
+          Object.keys(vars).forEach(function (k) {
+            str = str.replace("{" + k + "}", vars[k]);
+          });
+        }
+        return str;
+      }
+
+      function esc(val) {
+        return String(val == null ? "" : val)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function formatPrice(num) {
+        return Number(num || 0).toLocaleString(state.lang === "ar" ? "ar-EG" : "en-US");
+      }
+
+      function getCat(id) {
+        return CATEGORIES.find(function (c) { return c.id === id; }) || CATEGORIES[0];
+      }
+
+      function getGov(id) {
+        return GOVERNORATES.find(function (g) { return g.id === id; }) || GOVERNORATES[0];
+      }
+
+      function buildWaUrl(phone, title) {
+        const digits = String(phone || "").replace(/\D/g, "");
+        const intl = digits.indexOf("01") === 0 ? "2" + digits : (digits.indexOf("20") === 0 ? digits : "201000000000");
+        return "https://wa.me/" + intl + "?text=" + encodeURIComponent(title);
+      }
+
+      function showToast(msg) {
+        state.toast = msg;
+        render();
+        setTimeout(function () {
+          state.toast = "";
+          render();
+        }, 2800);
+      }
+
+      function copyTextSafe(text) {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        } catch (err) {
+          // Ignore clipboard errors in restricted frames
+        }
+        showToast(t("toastShared"));
+      }
+
+      function downloadNetlifyHtml() {
+        try {
+          const fullDoc = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+          const blob = new Blob([fullDoc], { type: "text/html;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = "index.html";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          showToast(t("toastDownloaded"));
+        } catch (err) {
+          showToast("index.html");
+        }
+      }
+
+      function filteredListings() {
+        const q = state.query.trim().toLowerCase();
+        const list = state.listings.filter(function (ad) {
+          if (state.mode === "saved" && state.savedIds.indexOf(ad.id) === -1) return false;
+          if (state.mode === "personal" && ad.sellerType !== "personal") return false;
+          if (state.mode === "business" && ad.sellerType !== "business") return false;
+          if (state.selectedStoreFilter && ad.storeId !== state.selectedStoreFilter) return false;
+          if (state.category !== "all" && ad.categoryId !== state.category) return false;
+          if (state.gov !== "all" && ad.govId !== state.gov) return false;
+          if (q) {
+            const hay = (ad.titleAr + " " + ad.titleEn + " " + ad.descAr + " " + ad.descEn + " " + ad.sellerName).toLowerCase();
+            if (hay.indexOf(q) === -1) return false;
+          }
+          return true;
+        });
+
+        if (state.sort === "low-high") {
+          list.sort(function (a, b) { return a.price - b.price; });
+        } else if (state.sort === "high-low") {
+          list.sort(function (a, b) { return b.price - a.price; });
+        } else {
+          list.sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+        }
+        return list;
+      }
+
+      /* =======================================================================
+       * 7. RENDER FUNCTIONS
+       * ======================================================================= */
+      function renderHeader() {
+        return (
+          '<header class="header">' +
+            '<div class="container header-inner">' +
+              '<button type="button" class="brand" data-act="home">' +
+                '<div class="brand-logo">' + (state.lang === "ar" ? "ل" : "L") + '</div>' +
+                '<div>' +
+                  '<div class="brand-title">' +
+                    '<span>' + esc(t("brandName")) + '</span>' +
+                    '<span class="brand-accent">' + esc(t("brandEn")) + '</span>' +
+                  '</div>' +
+                  '<div class="brand-sub">' + esc(t("brandSub")) + '</div>' +
+                '</div>' +
+              '</button>' +
+              '<div class="header-actions">' +
+                '<button type="button" class="btn btn-outline" data-act="mode-saved">' +
+                  '❤️ ' + esc(t("savedBtn")) + ' (' + state.savedIds.length + ')' +
+                '</button>' +
+                '<button type="button" class="btn btn-outline" data-act="toggle-lang">' +
+                  '🌐 ' + esc(t("langToggle")) +
+                '</button>' +
+                '<button type="button" class="btn btn-primary" data-act="open-post">' +
+                  '+ ' + esc(t("postAdBtn")) +
+                '</button>' +
+              '</div>' +
+            '</div>' +
+          '</header>'
+        );
+      }
+
+      function renderHero() {
+        const personalCount = state.listings.filter(function (x) { return x.sellerType === "personal"; }).length;
+        const businessCount = state.listings.filter(function (x) { return x.sellerType === "business"; }).length;
+
+        const modes = [
+          { id: "all", icon: "⚖️", label: t("modeAll"), count: state.listings.length },
+          { id: "personal", icon: "👤", label: t("modePersonal"), count: personalCount },
+          { id: "business", icon: "🏢", label: t("modeBusiness"), count: businessCount }
+        ];
+
+        return (
+          '<section class="hero">' +
+            '<div class="container">' +
+              '<div class="hero-tag">' + esc(t("heroTag")) + '</div>' +
+              '<h1 class="hero-title">' + esc(t("heroTitle")) + '</h1>' +
+              '<p class="hero-sub">' + esc(t("heroSub")) + '</p>' +
+              '<div class="search-box">' +
+                '<input id="q-input" class="field-control" type="text" value="' + esc(state.query) + '" placeholder="' + esc(t("searchPh")) + '" />' +
+                '<select id="gov-select" class="field-control">' +
+                  '<option value="all">' + esc(t("allGovs")) + '</option>' +
+                  GOVERNORATES.map(function (g) {
+                    return '<option value="' + g.id + '"' + (state.gov === g.id ? ' selected' : '') + '>' +
+                      esc(state.lang === "ar" ? g.ar : g.en) +
+                    '</option>';
+                  }).join("") +
+                '</select>' +
+                '<button type="button" class="btn btn-primary" style="height:44px;padding:0 22px;" data-act="search">' +
+                  '🔍 ' + esc(t("searchBtn")) +
+                '</button>' +
+              '</div>' +
+              '<div class="mode-bar">' +
+                modes.map(function (m) {
+                  const isAct = state.mode === m.id;
+                  return (
+                    '<button type="button" class="mode-pill' + (isAct ? ' active' : '') + '" data-act="set-mode" data-val="' + m.id + '">' +
+                      '<span>' + m.icon + '</span>' +
+                      '<span>' + esc(m.label) + '</span>' +
+                      '<span class="mode-count">' + m.count + '</span>' +
+                    '</button>'
+                  );
+                }).join("") +
+              '</div>' +
+            '</div>' +
+          '</section>'
+        );
+      }
+
+      function renderCategories() {
+        return (
+          '<section class="cat-bar">' +
+            '<div class="container">' +
+              '<div class="cat-scroll">' +
+                '<button type="button" class="cat-chip' + (state.category === "all" ? ' active' : '') + '" data-act="set-cat" data-val="all">' +
+                  '<span>' + esc(t("allCats")) + '</span>' +
+                  '<span class="cat-count">' + state.listings.length + '</span>' +
+                '</button>' +
+                CATEGORIES.map(function (c) {
+                  const isAct = state.category === c.id;
+                  const count = state.listings.filter(function (item) { return item.categoryId === c.id; }).length;
+                  return (
+                    '<button type="button" class="cat-chip' + (isAct ? ' active' : '') + '" data-act="set-cat" data-val="' + c.id + '">' +
+                      c.svg +
+                      '<span>' + esc(state.lang === "ar" ? c.ar : c.en) + '</span>' +
+                      '<span class="cat-count">' + count + '</span>' +
+                    '</button>'
+                  );
+                }).join("") +
+              '</div>' +
+            '</div>' +
+          '</section>'
+        );
+      }
+
+      function renderStoresPanel() {
+        if (state.mode === "personal" || state.mode === "saved") return "";
+        return (
+          '<div class="stores-panel">' +
+            '<div class="section-head">' +
+              '<div>' +
+                '<div class="section-title">🏢 ' + esc(t("storesHeading")) + '</div>' +
+                '<div class="section-sub">' + esc(t("storesSub")) + '</div>' +
+              '</div>' +
+              (state.selectedStoreFilter
+                ? '<button type="button" class="btn btn-outline" data-act="clear-store-filter">' + esc(t("clearStoreFilter")) + '</button>'
+                : '') +
+            '</div>' +
+            '<div class="stores-grid">' +
+              STORES.map(function (s) {
+                const gov = getGov(s.govId);
+                const isSelected = state.selectedStoreFilter === s.id;
+                return (
+                  '<button type="button" class="store-card' + (isSelected ? ' active' : '') + '" data-act="filter-store" data-id="' + s.id + '">' +
+                    '<div class="store-avatar">' + esc(s.initials) + '</div>' +
+                    '<div>' +
+                      '<div class="store-name">' + esc(state.lang === "ar" ? s.nameAr : s.nameEn) + ' ✓</div>' +
+                      '<div class="store-meta">' + esc(state.lang === "ar" ? s.typeAr : s.typeEn) + ' • 📍 ' + esc(state.lang === "ar" ? gov.ar : gov.en) + '</div>' +
+                    '</div>' +
+                  '</button>'
+                );
+              }).join("") +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderAdCard(ad) {
+        const title = state.lang === "ar" ? ad.titleAr : ad.titleEn;
+        const cat = getCat(ad.categoryId);
+        const gov = getGov(ad.govId);
+        const isBiz = ad.sellerType === "business";
+        const isSaved = state.savedIds.indexOf(ad.id) !== -1;
+        const waUrl = buildWaUrl(ad.phone, title);
+
+        return (
+          '<article class="ad-card">' +
+            '<div class="ad-banner ' + (isBiz ? 'business' : 'personal') + '" data-act="open-ad" data-id="' + ad.id + '">' +
+              '<div class="banner-top">' +
+                (isBiz
+                  ? '<span class="badge badge-business">✓ ' + esc(t("badgeBusiness")) + '</span>'
+                  : '<span class="badge badge-personal">👤 ' + esc(t("badgePersonal")) + '</span>') +
+                '<button type="button" class="fav-btn" data-act="toggle-save" data-id="' + ad.id + '">' +
+                  (isSaved ? '❤️' : '🤍') +
+                '</button>' +
+              '</div>' +
+              '<div class="banner-bottom">' +
+                '<span class="banner-icon">' + cat.emoji + '</span>' +
+                '<span class="banner-cat">' + esc(state.lang === "ar" ? cat.ar : cat.en) + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="ad-body">' +
+              '<div>' +
+                '<div class="ad-price-row">' +
+                  '<div class="ad-price">' + formatPrice(ad.price) + ' <span style="font-size:12px;">' + esc(t("egp")) + '</span></div>' +
+                  '<span class="ad-cond">' + esc(ad.condition === "new" ? t("condNew") : t("condUsed")) + '</span>' +
+                '</div>' +
+                '<h3 class="ad-title" data-act="open-ad" data-id="' + ad.id + '">' + esc(title) + '</h3>' +
+                '<div class="ad-meta">' +
+                  '<span>📍 ' + esc(state.lang === "ar" ? gov.ar : gov.en) + '</span>' +
+                  (isBiz && ad.storeId
+                    ? '<button type="button" class="ad-seller-link" data-act="open-store" data-id="' + ad.storeId + '">🏢 ' + esc(ad.sellerName) + '</button>'
+                    : '<span>' + esc(ad.sellerName) + '</span>') +
+                '</div>' +
+              '</div>' +
+              '<div class="ad-actions">' +
+                '<a class="btn btn-whatsapp" href="' + waUrl + '" target="_blank" rel="noopener noreferrer">💬 ' + esc(t("whatsapp")) + '</a>' +
+                '<a class="btn btn-outline" href="tel:' + esc(ad.phone) + '">📞 ' + esc(t("call")) + '</a>' +
+                '<button type="button" class="btn btn-outline" data-act="open-ad" data-id="' + ad.id + '">' + esc(t("details")) + '</button>' +
+              '</div>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      function renderFeed() {
+        const items = filteredListings();
+        let heading = t("feedHeadingAll");
+        if (state.mode === "personal") heading = t("feedHeadingPersonal");
+        else if (state.mode === "business") heading = t("feedHeadingBusiness");
+        else if (state.mode === "saved") heading = t("feedHeadingSaved");
+
+        return (
+          '<main class="main-area">' +
+            '<div class="container">' +
+              renderStoresPanel() +
+              '<div class="feed-toolbar">' +
+                '<div>' +
+                  '<div class="section-title">' + esc(heading) + '</div>' +
+                  '<div class="section-sub">' + esc(t("resultsLabel", { n: items.length })) + '</div>' +
+                '</div>' +
+                '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">' +
+                  '<button type="button" class="btn btn-outline" data-act="reset">' + esc(t("resetBtn")) + '</button>' +
+                  '<select id="sort-select" class="field-control" style="width:auto;height:38px;">' +
+                    '<option value="newest"' + (state.sort === "newest" ? ' selected' : '') + '>' + esc(t("sortNewest")) + '</option>' +
+                    '<option value="low-high"' + (state.sort === "low-high" ? ' selected' : '') + '>' + esc(t("sortLowHigh")) + '</option>' +
+                    '<option value="high-low"' + (state.sort === "high-low" ? ' selected' : '') + '>' + esc(t("sortHighLow")) + '</option>' +
+                  '</select>' +
+                '</div>' +
+              '</div>' +
+              (items.length === 0
+                ? '<div class="empty-box">' +
+                    '<div style="font-size:36px;margin-bottom:8px;">🔎</div>' +
+                    '<div class="section-title">' + esc(t("emptyTitle")) + '</div>' +
+                    '<p class="section-sub" style="margin:6px 0 14px;">' + esc(t("emptySub")) + '</p>' +
+                    '<button type="button" class="btn btn-primary" data-act="reset">' + esc(t("resetBtn")) + '</button>' +
+                  '</div>'
+                : '<div class="listings-grid">' + items.map(renderAdCard).join("") + '</div>') +
+            '</div>' +
+          '</main>'
+        );
+      }
+
+      function renderAdModal() {
+        if (!state.activeAdId) return "";
+        const ad = state.listings.find(function (x) { return x.id === state.activeAdId; });
+        if (!ad) return "";
+        const title = state.lang === "ar" ? ad.titleAr : ad.titleEn;
+        const desc = state.lang === "ar" ? ad.descAr : ad.descEn;
+        const cat = getCat(ad.categoryId);
+        const gov = getGov(ad.govId);
+        const isBiz = ad.sellerType === "business";
+        const isSaved = state.savedIds.indexOf(ad.id) !== -1;
+
+        return (
+          '<div class="modal-backdrop" data-act="backdrop-close">' +
+            '<div class="modal-card">' +
+              '<div class="modal-head' + (isBiz ? ' business' : '') + '">' +
+                '<div style="display:flex;align-items:center;gap:8px;">' +
+                  '<span style="font-size:26px;">' + cat.emoji + '</span>' +
+                  (isBiz
+                    ? '<span class="badge badge-business">✓ ' + esc(t("badgeBusiness")) + '</span>'
+                    : '<span class="badge badge-personal">👤 ' + esc(t("badgePersonal")) + '</span>') +
+                '</div>' +
+                '<button type="button" class="btn btn-outline" style="padding:6px 10px;" data-act="close-modals">✕</button>' +
+              '</div>' +
+              '<div class="modal-body">' +
+                '<div>' +
+                  '<div class="ad-price" style="font-size:22px;">' + formatPrice(ad.price) + ' ' + esc(t("egp")) + '</div>' +
+                  '<h2 style="font-size:18px;font-weight:800;margin-top:4px;">' + esc(title) + '</h2>' +
+                  '<div class="section-sub" style="margin-top:4px;">📍 ' + esc(state.lang === "ar" ? gov.ar : gov.en) + ' • ' + esc(ad.sellerName) + '</div>' +
+                '</div>' +
+                '<p style="font-size:13.5px;background:var(--bg-page);padding:12px;border-radius:12px;border:1px solid var(--border);">' + esc(desc) + '</p>' +
+                (isBiz && ad.storeId
+                  ? '<button type="button" class="btn btn-primary" data-act="filter-store" data-id="' + ad.storeId + '">🏢 ' + esc(t("viewStoreAdsBtn")) + '</button>'
+                  : '') +
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">' +
+                  '<a class="btn btn-whatsapp" href="' + buildWaUrl(ad.phone, title) + '" target="_blank" rel="noopener noreferrer">💬 ' + esc(t("whatsapp")) + '</a>' +
+                  '<a class="btn btn-primary" href="tel:' + esc(ad.phone) + '">📞 ' + esc(ad.phone) + '</a>' +
+                  '<button type="button" class="btn btn-outline" data-act="toggle-save" data-id="' + ad.id + '">' + (isSaved ? '❤️ ' : '🤍 ') + esc(t("savedBtn")) + '</button>' +
+                  '<button type="button" class="btn btn-outline" data-act="share-ad" data-id="' + ad.id + '">🔗 ' + esc(t("share")) + '</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderStoreModal() {
+        if (!state.activeStoreId) return "";
+        const store = STORES.find(function (s) { return s.id === state.activeStoreId; });
+        if (!store) return "";
+        const gov = getGov(store.govId);
+        const storeAds = state.listings.filter(function (ad) { return ad.storeId === store.id; });
+        const storeName = state.lang === "ar" ? store.nameAr : store.nameEn;
+
+        return (
+          '<div class="modal-backdrop" data-act="backdrop-close">' +
+            '<div class="modal-card">' +
+              '<div class="modal-head business">' +
+                '<div style="display:flex;align-items:center;gap:12px;">' +
+                  '<div class="store-avatar" style="background:var(--accent);">' + esc(store.initials) + '</div>' +
+                  '<div>' +
+                    '<div style="font-size:16px;font-weight:800;">' + esc(storeName) + '</div>' +
+                    '<div style="font-size:12px;opacity:0.9;">' + esc(state.lang === "ar" ? store.typeAr : store.typeEn) + ' • 📍 ' + esc(state.lang === "ar" ? gov.ar : gov.en) + '</div>' +
+                  '</div>' +
+                '</div>' +
+                '<button type="button" class="btn btn-outline" style="padding:6px 10px;" data-act="close-modals">✕</button>' +
+              '</div>' +
+              '<div class="modal-body">' +
+                '<p style="font-size:13.5px;color:var(--text-muted);">' + esc(state.lang === "ar" ? store.bioAr : store.bioEn) + '</p>' +
+                '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+                  '<a class="btn btn-whatsapp" href="' + buildWaUrl(store.phone, storeName) + '" target="_blank" rel="noopener noreferrer">💬 ' + esc(t("whatsapp")) + '</a>' +
+                  '<a class="btn btn-outline" href="tel:' + esc(store.phone) + '">📞 ' + esc(store.phone) + '</a>' +
+                '</div>' +
+                '<div class="section-title" style="font-size:14px;">' + esc(t("storeAdsTitle")) + ' (' + storeAds.length + ')</div>' +
+                storeAds.map(function (ad) {
+                  return (
+                    '<div style="padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--bg-page);display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
+                      '<div style="font-size:13px;font-weight:700;">' + esc(state.lang === "ar" ? ad.titleAr : ad.titleEn) + '</div>' +
+                      '<div class="ad-price" style="font-size:14px;white-space:nowrap;">' + formatPrice(ad.price) + ' ' + esc(t("egp")) + '</div>' +
+                    '</div>'
+                  );
+                }).join("") +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderPostModal() {
+        if (!state.postOpen) return "";
+        const isPersonal = state.postType === "personal";
+
+        return (
+          '<div class="modal-backdrop" data-act="backdrop-close">' +
+            '<div class="modal-card">' +
+              '<div class="modal-head">' +
+                '<div>' +
+                  '<div style="font-size:16px;font-weight:800;">' + esc(t("postTitle")) + '</div>' +
+                  '<div class="section-sub">' + esc(t("postStep")) + '</div>' +
+                '</div>' +
+                '<button type="button" class="btn btn-outline" style="padding:6px 10px;" data-act="close-modals">✕</button>' +
+              '</div>' +
+              '<form id="post-form" class="modal-body">' +
+                (state.postError ? '<div class="error-box">' + esc(state.postError) + '</div>' : '') +
+                '<div>' +
+                  '<label class="form-label">' + esc(t("sellerTypeLabel")) + '</label>' +
+                  '<div class="type-grid">' +
+                    '<button type="button" class="type-card' + (isPersonal ? ' selected-personal' : '') + '" data-act="post-type" data-val="personal">' +
+                      '<div style="font-size:13px;font-weight:800;">👤 ' + esc(t("typePersonalTitle")) + '</div>' +
+                      '<div style="font-size:11.5px;color:var(--text-muted);margin-top:3px;">' + esc(t("typePersonalDesc")) + '</div>' +
+                    '</button>' +
+                    '<button type="button" class="type-card' + (!isPersonal ? ' selected-business' : '') + '" data-act="post-type" data-val="business">' +
+                      '<div style="font-size:13px;font-weight:800;">🏢 ' + esc(t("typeBusinessTitle")) + '</div>' +
+                      '<div style="font-size:11.5px;color:var(--text-muted);margin-top:3px;">' + esc(t("typeBusinessDesc")) + '</div>' +
+                    '</button>' +
+                  '</div>' +
+                '</div>' +
+                '<div>' +
+                  '<label class="form-label" for="p-title">' + esc(t("fieldTitle")) + '</label>' +
+                  '<input id="p-title" class="field-control" type="text" required placeholder="' + esc(t("fieldTitlePh")) + '" />' +
+                '</div>' +
+                '<div class="form-grid-2">' +
+                  '<div>' +
+                    '<label class="form-label" for="p-cat">' + esc(t("fieldCategory")) + '</label>' +
+                    '<select id="p-cat" class="field-control">' +
+                      CATEGORIES.map(function (c) {
+                        return '<option value="' + c.id + '">' + c.emoji + ' ' + esc(state.lang === "ar" ? c.ar : c.en) + '</option>';
+                      }).join("") +
+                    '</select>' +
+                  '</div>' +
+                  '<div>' +
+                    '<label class="form-label" for="p-gov">' + esc(t("fieldGov")) + '</label>' +
+                    '<select id="p-gov" class="field-control">' +
+                      GOVERNORATES.map(function (g) {
+                        return '<option value="' + g.id + '">' + esc(state.lang === "ar" ? g.ar : g.en) + '</option>';
+                      }).join("") +
+                    '</select>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="form-grid-2">' +
+                  '<div>' +
+                    '<label class="form-label" for="p-price">' + esc(t("fieldPrice")) + '</label>' +
+                    '<input id="p-price" class="field-control" type="number" min="1" required placeholder="15000" />' +
+                  '</div>' +
+                  '<div>' +
+                    '<label class="form-label" for="p-cond">' + esc(t("fieldCondition")) + '</label>' +
+                    '<select id="p-cond" class="field-control">' +
+                      '<option value="used">' + esc(t("condUsed")) + '</option>' +
+                      '<option value="new">' + esc(t("condNew")) + '</option>' +
+                    '</select>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="form-grid-2">' +
+                  '<div>' +
+                    '<label class="form-label" for="p-seller">' + esc(t("fieldSeller")) + '</label>' +
+                    '<input id="p-seller" class="field-control" type="text" required placeholder="' + esc(t("fieldSellerPh")) + '" />' +
+                  '</div>' +
+                  '<div>' +
+                    '<label class="form-label" for="p-phone">' + esc(t("fieldPhone")) + '</label>' +
+                    '<input id="p-phone" class="field-control" type="tel" required placeholder="01012345678" />' +
+                  '</div>' +
+                '</div>' +
+                '<div>' +
+                  '<label class="form-label" for="p-desc">' + esc(t("fieldDesc")) + '</label>' +
+                  '<textarea id="p-desc" class="textarea-control" rows="2" placeholder="' + esc(t("fieldDescPh")) + '"></textarea>' +
+                '</div>' +
+                '<div style="display:flex;justify-content:flex-end;gap:8px;">' +
+                  '<button type="button" class="btn btn-outline" data-act="close-modals">' + esc(t("cancelBtn")) + '</button>' +
+                  '<button type="submit" class="btn btn-primary">' + esc(t("publishBtn")) + '</button>' +
+                '</div>' +
+              '</form>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderFooter() {
+        return (
+          '<footer class="footer">' +
+            '<div class="container footer-inner">' +
+              '<div>' +
+                '<div style="font-weight:800;color:#ffffff;font-size:14px;">' + esc(t("brandName")) + ' ' + esc(t("brandEn")) + '</div>' +
+                '<div style="font-size:12px;color:#94A3B8;margin-top:3px;">' + esc(t("footerNote")) + '</div>' +
+              '</div>' +
+              '<button type="button" class="btn btn-primary" data-act="download-html">' +
+                '⬇️ ' + esc(t("downloadBtn")) +
+              '</button>' +
+            '</div>' +
+          '</footer>'
+        );
+      }
+
+      function render() {
+        document.documentElement.lang = state.lang;
+        document.documentElement.dir = state.lang === "ar" ? "rtl" : "ltr";
+
+        const root = document.getElementById("app");
+        if (!root) return;
+
+        root.innerHTML =
+          renderHeader() +
+          renderHero() +
+          renderCategories() +
+          renderFeed() +
+          renderFooter() +
+          renderAdModal() +
+          renderStoreModal() +
+          renderPostModal() +
+          (state.toast ? '<div class="toast">✓ ' + esc(state.toast) + '</div>' : '');
+
+        attachEvents();
+      }
+
+      function attachEvents() {
+        document.querySelectorAll("[data-act]").forEach(function (el) {
+          el.addEventListener("click", function (e) {
+            const act = el.getAttribute("data-act");
+            if (act === "backdrop-close") {
+              if (e.target === el) {
+                state.activeAdId = null;
+                state.activeStoreId = null;
+                state.postOpen = false;
+                render();
+              }
+              return;
+            }
+            e.stopPropagation();
+
+            if (act === "home") {
+              state.mode = "all";
+              state.category = "all";
+              state.gov = "all";
+              state.selectedStoreFilter = null;
+              state.query = "";
+              render();
+            } else if (act === "toggle-lang") {
+              state.lang = state.lang === "ar" ? "en" : "ar";
+              render();
+            } else if (act === "mode-saved") {
+              state.mode = state.mode === "saved" ? "all" : "saved";
+              state.selectedStoreFilter = null;
+              render();
+            } else if (act === "set-mode") {
+              state.mode = el.getAttribute("data-val") || "all";
+              state.selectedStoreFilter = null;
+              render();
+            } else if (act === "set-cat") {
+              state.category = el.getAttribute("data-val") || "all";
+              render();
+            } else if (act === "filter-store") {
+              const sid = el.getAttribute("data-id");
+              state.selectedStoreFilter = state.selectedStoreFilter === sid ? null : sid;
+              state.mode = "all";
+              state.activeAdId = null;
+              render();
+            } else if (act === "clear-store-filter") {
+              state.selectedStoreFilter = null;
+              render();
+            } else if (act === "search") {
+              const qEl = document.getElementById("q-input");
+              const gEl = document.getElementById("gov-select");
+              if (qEl) state.query = qEl.value;
+              if (gEl) state.gov = gEl.value;
+              render();
+            } else if (act === "reset") {
+              state.mode = "all";
+              state.category = "all";
+              state.gov = "all";
+              state.selectedStoreFilter = null;
+              state.query = "";
+              render();
+            } else if (act === "toggle-save") {
+              const id = el.getAttribute("data-id");
+              if (id) {
+                const idx = state.savedIds.indexOf(id);
+                if (idx === -1) state.savedIds.push(id);
+                else state.savedIds.splice(idx, 1);
+                showToast(t("toastSaved"));
+              }
+            } else if (act === "open-ad") {
+              state.activeAdId = el.getAttribute("data-id");
+              render();
+            } else if (act === "open-store") {
+              state.activeStoreId = el.getAttribute("data-id");
+              render();
+            } else if (act === "share-ad") {
+              const id = el.getAttribute("data-id");
+              const ad = state.listings.find(function (x) { return x.id === id; });
+              if (ad) {
+                const title = state.lang === "ar" ? ad.titleAr : ad.titleEn;
+                copyTextSafe(title + " — " + formatPrice(ad.price) + " " + t("egp") + " (" + ad.phone + ")");
+              }
+            } else if (act === "open-post") {
+              state.postError = "";
+              state.postOpen = true;
+              render();
+            } else if (act === "post-type") {
+              state.postType = el.getAttribute("data-val") || "personal";
+              render();
+            } else if (act === "close-modals") {
+              state.activeAdId = null;
+              state.activeStoreId = null;
+              state.postOpen = false;
+              render();
+            } else if (act === "download-html") {
+              downloadNetlifyHtml();
+            }
+          });
+        });
+
+        const govSel = document.getElementById("gov-select");
+        if (govSel) {
+          govSel.addEventListener("change", function (e) {
+            state.gov = e.target.value;
+            render();
+          });
+        }
+
+        const sortSel = document.getElementById("sort-select");
+        if (sortSel) {
+          sortSel.addEventListener("change", function (e) {
+            state.sort = e.target.value;
+            render();
+          });
+        }
+
+        const qInp = document.getElementById("q-input");
+        if (qInp) {
+          qInp.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+              state.query = qInp.value;
+              render();
+            }
+          });
+        }
+
+        const postForm = document.getElementById("post-form");
+        if (postForm) {
+          postForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const title = (document.getElementById("p-title").value || "").trim();
+            const cat = document.getElementById("p-cat").value || "vehicles";
+            const gov = document.getElementById("p-gov").value || "cairo";
+            const cond = document.getElementById("p-cond").value || "used";
+            const price = Number(document.getElementById("p-price").value || 0);
+            const seller = (document.getElementById("p-seller").value || "").trim();
+            const phone = (document.getElementById("p-phone").value || "").replace(/\D/g, "");
+            const desc = (document.getElementById("p-desc").value || "").trim();
+
+            if (!title || price <= 0 || !seller || !/^01[0125][0-9]{8}$/.test(phone)) {
+              state.postError = t("formErr");
+              render();
+              return;
+            }
+
+            const newItem = {
+              id: "ad-" + Date.now(),
+              sellerType: state.postType,
+              storeId: state.postType === "business" ? "store-capital" : null,
+              titleAr: title,
+              titleEn: title,
+              descAr: desc || title,
+              descEn: desc || title,
+              categoryId: cat,
+              govId: gov,
+              condition: cond,
+              price: price,
+              sellerName: seller,
+              phone: phone,
+              createdAt: Math.floor(Date.now() / 1000)
+            };
+
+            state.listings.unshift(newItem);
+            writeStoredListings(state.listings);
+            state.postOpen = false;
+            state.postError = "";
+            state.mode = "all";
+            showToast(t("toastPublished"));
+          });
+        }
+      }
+
+      render();
+    })();
+  </script>
+
+</body></html>
